@@ -1,4 +1,5 @@
-module bleKrinos {
+@SuppressWarnings("module")
+module org.bleKrinos {
 	exports org.blekrinos.application to javafx.graphics;
 	
 	requires javafx.fxml;
