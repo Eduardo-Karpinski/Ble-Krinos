@@ -16,23 +16,18 @@ import javafx.concurrent.Worker.State;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 
 public class TabController implements Initializable {
 
 	private Tab myTab;
-	@FXML
-	private VBox vBox;
-	@FXML
-	private AnchorPane anchorPane;
 	@FXML
 	private TextField searchField;
 	@FXML
@@ -43,11 +38,11 @@ public class TabController implements Initializable {
 	private Button reloadPage;
 	@FXML
 	private WebView webView;
+	@FXML
+	private ProgressBar progressBar;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
-		searchField.setPrefWidth(900);
 
 		webView.getEngine().locationProperty().addListener(new ChangeListener<String>() {
 			@Override
@@ -64,8 +59,8 @@ public class TabController implements Initializable {
 				}
 			}
 		});
-
-		webView.getEngine().setUserAgent("Ble Krínos/1.0.0 (" + System.getProperty("os.name") + "; " + System.getProperty("os.arch") + ";" + ")");
+		
+		progressBar.progressProperty().bind(webView.getEngine().getLoadWorker().progressProperty());
 		webView.getEngine().load("https://duckduckgo.com");
 
 		addMenuIcons();
@@ -140,6 +135,14 @@ public class TabController implements Initializable {
 
 	public void setMyTab(Tab myTab) {
 		this.myTab = myTab;
+	}
+	
+	public ProgressBar getProgressBar() {
+		return progressBar;
+	}
+	
+	public TextField getSearchField() {
+		return searchField;
 	}
 	
 }

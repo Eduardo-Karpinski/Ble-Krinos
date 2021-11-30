@@ -21,15 +21,15 @@ public class Main extends Application {
 		
 		FXMLLoader loader = new FXMLLoader(Util.RESOURCE_CLASS.getResource("resources/TabPanelController.fxml"));
 		Parent root = loader.load();	
-		TabPanelController controller = loader.getController();
-		Scene scene = new Scene(root);	
+		root.getStylesheets().add(Util.RESOURCE_CLASS.getResource("resources/browser.css").toExternalForm());
+		Scene scene = new Scene(root);
 		
-		addListeners(controller, scene);
+		addListeners(loader.getController(), scene);
 		
 		primaryStage.getIcons().add(new Image(Util.RESOURCE_CLASS.getResource("resources/lirio.png").toString()));
 		primaryStage.setTitle("Ble Krínos");
-		primaryStage.setWidth(Util.RECTANCLE2D.getWidth());
-		primaryStage.setHeight(Util.RECTANCLE2D.getHeight());
+		primaryStage.setWidth(Util.DIMENSION.width);
+		primaryStage.setHeight(Util.DIMENSION.height);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
@@ -39,7 +39,19 @@ public class Main extends Application {
 		    @Override 
 		    public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
 		    	controller.getTabs().forEach(tab -> {
+		    		
+		    		tab.getProgressBar().setMinWidth(newSceneWidth.doubleValue());
+		    		tab.getProgressBar().setPrefWidth(newSceneWidth.doubleValue());
+		    		tab.getProgressBar().setMaxWidth(newSceneWidth.doubleValue());
+		    		
+		    		tab.getSearchField().setMinWidth(newSceneWidth.doubleValue() - 61);
+		    		tab.getSearchField().setPrefWidth(newSceneWidth.doubleValue() - 61);
+		    		tab.getSearchField().setMaxWidth(newSceneWidth.doubleValue() - 61);
+		    		
+		    		tab.getWebView().setMinWidth(newSceneWidth.doubleValue());
 		    		tab.getWebView().setPrefWidth(newSceneWidth.doubleValue());
+		    		tab.getWebView().setMaxWidth(newSceneWidth.doubleValue());
+		    		
 		    	});
 		    }
 		});
@@ -48,7 +60,9 @@ public class Main extends Application {
 		    @Override 
 		    public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
 		    	controller.getTabs().forEach(tab -> {
-		    		tab.getWebView().setPrefHeight(newSceneHeight.doubleValue());
+		    		tab.getWebView().setMinHeight(newSceneHeight.doubleValue() - 50);
+		    		tab.getWebView().setPrefHeight(newSceneHeight.doubleValue() - 50);
+		    		tab.getWebView().setMaxHeight(newSceneHeight.doubleValue() - 50);
 		    	});
 		    }
 		});
