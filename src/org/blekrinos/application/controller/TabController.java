@@ -1,10 +1,13 @@
 package org.blekrinos.application.controller;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ResourceBundle;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.blekrinos.application.util.Util;
 import org.w3c.dom.Element;
@@ -51,13 +54,45 @@ public class TabController implements Initializable {
 			}
 		});
 
+		
 		webView.getEngine().getLoadWorker().stateProperty().addListener((ov, oldState, newState) -> {
+			
 			if (newState == State.SUCCEEDED) {
 				String title = getTitle();
 				if (title != null) {
 					myTab.setText(title);
 				}
+			} else if (newState == State.CANCELLED) {
+				
+//				in test 
+				try {
+					
+					URL url = new URL(webView.getEngine().getLocation());
+					HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+					conn.setDoOutput(true);
+			        conn.setDoInput(true);
+			        conn.setRequestMethod("GET");
+			        conn.setRequestProperty("charset", "utf-8");
+			        conn.setUseCaches(false);
+			        conn.setConnectTimeout(1000 * 5);
+			        conn.connect();
+			        
+			        String[] info = conn.getHeaderField("Content-Disposition").split("=");
+			        
+			        for (int i = 0; i < info.length; i++) {
+						if (info[i].contains("filename")) {
+							File destination = new File(System.getProperty("user.home") + System.getProperty("file.separator") + "Downloads" + System.getProperty("file.separator") + info[i + 1]);
+							FileUtils.copyURLToFile(url, destination);
+							break;
+						}
+					}
+			        
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
 			}
+			
 		});
 		
 		progressBar.progressProperty().bind(webView.getEngine().getLoadWorker().progressProperty());
@@ -65,7 +100,7 @@ public class TabController implements Initializable {
 
 		addMenuIcons();
 	}
-
+	
 	public void selectAllText() {
 		searchField.selectAll();
 	}
@@ -75,7 +110,7 @@ public class TabController implements Initializable {
 			String url = searchField.getText();
 
 			boolean isValid = new UrlValidator().isValid(url);
-
+			
 			if (isValid) {
 				webView.getEngine().load(url);
 			} else {

@@ -7,6 +7,7 @@ module org.bleKrinos {
 	requires java.desktop;
 	requires javafx.controls;
 	requires commons.validator;
+	requires org.apache.commons.io;
 	
 	requires transitive javafx.graphics;
 	
