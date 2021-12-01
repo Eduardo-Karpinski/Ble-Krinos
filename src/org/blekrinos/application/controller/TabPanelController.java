@@ -25,6 +25,7 @@ public class TabPanelController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		tabPane.getTabs().add(newTab);
+		newTab.getStyleClass().add("newTab");
 		
 		newTab();
 		
@@ -41,6 +42,7 @@ public class TabPanelController implements Initializable {
 			
 			FXMLLoader loader = new FXMLLoader(Util.RESOURCE_CLASS.getResource("resources/TabController.fxml"));
 			Parent load = loader.load();
+			load.getStylesheets().add(Util.RESOURCE_CLASS.getResource("resources/browser.css").toExternalForm());
 			TabController controller = loader.getController();
 			
 			controller.getProgressBar().setMinWidth(Util.primaryStage.getWidth());

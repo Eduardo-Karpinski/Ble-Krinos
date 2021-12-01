@@ -64,7 +64,6 @@ public class TabController implements Initializable {
 				}
 			} else if (newState == State.CANCELLED) {
 				
-//				in test 
 				try {
 					
 					URL url = new URL(webView.getEngine().getLocation());
@@ -74,18 +73,44 @@ public class TabController implements Initializable {
 			        conn.setRequestMethod("GET");
 			        conn.setRequestProperty("charset", "utf-8");
 			        conn.setUseCaches(false);
-			        conn.setConnectTimeout(1000 * 5);
+			        conn.setConnectTimeout(5000);
 			        conn.connect();
 			        
-			        String[] info = conn.getHeaderField("Content-Disposition").split("=");
+			        conn.getHeaderFields().forEach((k, v) -> {
+			        	System.out.println(k + " " + v);
+			        });
 			        
-			        for (int i = 0; i < info.length; i++) {
-						if (info[i].contains("filename")) {
-							File destination = new File(System.getProperty("user.home") + System.getProperty("file.separator") + "Downloads" + System.getProperty("file.separator") + info[i + 1]);
-							FileUtils.copyURLToFile(url, destination);
-							break;
+			        if(conn.getHeaderField("Content-Type").contains("octet-stream")) {
+			        	
+			        	// exemples
+			        	
+			        	// Content-Disposition
+			        	// https://net.geo.opera.com/opera/stable/windows?utm_source=softonic&utm_medium=pb&utm_campaign=CPI_WIN
+			        	
+			        	// name url
+			        	// https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe
+			        	
+			        	String fileName = "";
+			        	
+			        	if (conn.getHeaderField("Content-Disposition") != null) {
+			        		String[] info = conn.getHeaderField("Content-Disposition").split("=");
+			        		for (int i = 0; i < info.length; i++) {
+			        			if (info[i].contains("filename")) {
+			        				fileName = info[i + 1];
+			        				break;
+			        			}
+			        		}
+			        	} else {
+			        		String[] split = url.toString().split("/");
+			        		fileName = split[split.length - 1];
+			        	}
+			        	
+			        	if (!fileName.isBlank()) {
+			        		File destination = new File(System.getProperty("user.home") + System.getProperty("file.separator") + "Downloads" + System.getProperty("file.separator") + fileName);
+			        		FileUtils.copyURLToFile(url, destination);
 						}
-					}
+			        	
+			        }
 			        
 				} catch (Exception e) {
 					e.printStackTrace();

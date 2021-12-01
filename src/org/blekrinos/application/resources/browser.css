@@ -1,3 +1,9 @@
 .tab-label {
     -fx-content-display: right;
 }
+
+.newTab {
+ 	-fx-max-width: 50; /* It does not work */
+	-fx-min-width: 50; /* It does not work */
+	-fx-pref-width: 50; /* It work but have an error in text */
+}
